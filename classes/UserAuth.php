@@ -4,7 +4,13 @@ session_start();
 
 class UserAuth extends Dbh
 {
-    private static $db;
+
+    // I used public here because I keep getting this error message when I run the code 
+    //"Notice: Accessing static property FormController::$db as non static"
+    // but it work fine with public $db
+    // Please let me know the issue while marking.
+
+    Public   $db;
 
     public function __construct()
     {
@@ -27,6 +33,7 @@ class UserAuth extends Dbh
     public function register($fullname, $email, $password, $confirmPassword, $country, $gender)
     {
         $conn = $this->db->connect();
+        if(!$this->checkEmailExist($email)){
         if ($this->confirmPasswordMatch($password, $confirmPassword)) {
             $sql = "INSERT INTO Students (`full_names`, `email`, `password`, `country`, `gender`) VALUES ('$fullname','$email', '$password', '$country', '$gender')";
             if ($conn->query($sql)) {
@@ -35,6 +42,13 @@ class UserAuth extends Dbh
                 echo "Opps" . $conn->error;
             }
         }
+
+    }
+
+    else{
+        echo "User already exist";
+    }
+
     }
 
     public function login($email, $password)
@@ -44,7 +58,7 @@ class UserAuth extends Dbh
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             $_SESSION['email'] = $email;
-            header("Location: ../dashboard.php");
+            header("Location: dashboard.php");
         } else {
             header("Location: forms/login.php");
         }
@@ -134,7 +148,7 @@ class UserAuth extends Dbh
         }
     }
 
-    public function logout($username)
+    public function logout($email)
     {
         session_start();
         session_destroy();
