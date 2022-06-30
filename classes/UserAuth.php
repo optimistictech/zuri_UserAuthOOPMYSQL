@@ -127,12 +127,15 @@ class UserAuth extends Dbh
     {
         $conn = $this->db->connect();
         if ($this->checkEmailExist($email)) {
-            $sql = "UPDATE users SET password = '$password' WHERE email = '$email'";
+            $sql = "UPDATE Students SET password = '$password' WHERE email = '$email'";
             if ($conn->query($sql) === TRUE) {
-                header("Location: ../dashboard.php?update=success");
+                header("Location: dashboard.php?update=success");
             } else {
                 header("Location: forms/resetpassword.php?error=1");
             }
+        }
+        else {
+            echo "User doesnt exist";
         }
     }
 
